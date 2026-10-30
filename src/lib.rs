@@ -9,13 +9,19 @@ use basalt_plugin_sdk::prelude::*;
 
 basalt_plugin_meta! {
     name:         "swift-project-model",
-    version:      "0.1.0",
-    hook_flags:   CAP_PROJECT_MODEL,
+    version:      "0.1.1",
+    hook_flags:   CAP_PROJECT_MODEL | CAP_SHADOW_EXCLUDES,
     provides:     "project-model:swift",
     requires:     "",
     file_globs:   "",
     activates_on: "Package.swift\n*.xcodeproj\n*.xcworkspace\n**/Package.swift\n**/*.xcodeproj\n**/*.xcworkspace",
     activation_events: "",
+}
+
+/// Xcode/SwiftPM dependency caches and generated build directories.
+#[basalt_plugin]
+fn shadow_excludes(_root: &str) -> Vec<u8> {
+    br#"["**/Pods/**","**/DerivedData/**","**/.xcode-derived/**","**/.build/**","**/*.xcuserstate"]"#.to_vec()
 }
 
 // ── Target kind constants ─────────────────────────────────────────────────────
@@ -43,6 +49,7 @@ const TARGET_KIND_AGGREGATOR: u8 = 13;
 
 // ── Host import ───────────────────────────────────────────────────────────────
 
+#[link(wasm_import_module = "env")]
 extern "C" {
     fn basalt_read_file(path_ptr: i32, path_len: i32, out_ptr: i32, out_cap: i32) -> i32;
 }
