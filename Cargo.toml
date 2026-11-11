@@ -2,11 +2,11 @@
 
 [package]
 name    = "swift-project-model"
-version = "0.1.1"
+version = "0.1.2"
 edition = "2021"
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-basalt-plugin-sdk = { git = "https://github.com/adevcorn/basalt-plugin-sdk", tag = "v0.1.4" }
+basalt-plugin-sdk = { path = "../basalt-plugin-sdk" }

@@ -10,15 +10,26 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout plugin
+        uses: actions/checkout@v4
+        with:
+          path: plugin
+
+      - name: Checkout SDK
+        uses: actions/checkout@v4
+        with:
+          repository: adevcorn/basalt-plugin-sdk
+          path: basalt-plugin-sdk
 
       - name: Install Rust wasm32 target
         run: rustup target add wasm32-unknown-unknown
 
       - name: Build
+        working-directory: plugin
         run: cargo build --target wasm32-unknown-unknown --release
 
       - name: Upload release asset
+        working-directory: plugin
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

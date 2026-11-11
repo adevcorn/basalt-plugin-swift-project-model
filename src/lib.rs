@@ -9,8 +9,8 @@ use basalt_plugin_sdk::prelude::*;
 
 basalt_plugin_meta! {
     name:         "swift-project-model",
-    version:      "0.1.1",
-    hook_flags:   CAP_PROJECT_MODEL | CAP_SHADOW_EXCLUDES,
+    version:      "0.1.2",
+    hook_flags:   CAP_PROJECT_MODEL | CAP_SHADOW_EXCLUDES | CAP_SHADOW_SYMLINKS,
     provides:     "project-model:swift",
     requires:     "",
     file_globs:   "",
@@ -22,6 +22,14 @@ basalt_plugin_meta! {
 #[basalt_plugin]
 fn shadow_excludes(_root: &str) -> Vec<u8> {
     br#"["**/Pods/**","**/DerivedData/**","**/.xcode-derived/**","**/.build/**","**/*.xcuserstate"]"#.to_vec()
+}
+
+/// Resolved dependency trees only. Compiled output (`DerivedData`,
+/// `.build/debug`, `.build/release`) is intentionally not shared so shadows stay
+/// isolated.
+#[basalt_plugin]
+fn shadow_symlinks(_root: &str) -> Vec<u8> {
+    br#"["Pods","**/Pods","Carthage/Checkouts","**/Carthage/Checkouts",".build/checkouts","**/.build/checkouts",".build/repositories","**/.build/repositories",".build/artifacts","**/.build/artifacts"]"#.to_vec()
 }
 
 // ── Target kind constants ─────────────────────────────────────────────────────
